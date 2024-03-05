@@ -126,7 +126,7 @@ tr:hover td {
     border: none;
     border-radius: 5px;
     color: #fff;
-    background-color: #007bff; /* Màu nền của nút */
+    background-color: #007bff; 
     cursor: pointer;
     transition: background-color 0.3s ease;
     text-decoration: none;
@@ -135,7 +135,7 @@ tr:hover td {
 
 #create:hover,
 #edit:hover {
-    background-color: #0056b3; /* Màu nền khi hover */
+    background-color: #0056b3; 
 }
 
 .btn {
