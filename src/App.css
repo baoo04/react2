@@ -1,0 +1,143 @@
+.App {
+    font-family: Arial, sans-serif;
+    margin-top: 50px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+th,
+td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    text-align: center;
+    border-top: 1px solid #ddd;
+}
+
+th {
+    background-color: beige;
+}
+
+td {
+    background: #fff;
+}
+
+tr:hover td {
+    background: #f2f2f2;
+}
+
+.edit-btn,
+.delete-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+    background-color: #0056b3;
+}
+
+.users__add {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.users__add > div {
+    margin: 10px;
+}
+
+.users__add input[type="text"] {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.button-group {
+    margin-top: 10px;
+    gap: 15px;
+    display: flex;
+}
+
+.success-message {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    right: 20px;
+    display: inline-block;
+}
+
+.edit-btn {
+    margin-right: 5px;
+}
+
+.delete-btn {
+    margin-left: 5px;
+    background-color: brown;
+}
+
+.delete-btn:hover {
+    background: red;
+}
+
+.users__add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-group {
+    padding-left: 30px;
+}
+
+#create {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #007bff; /* Màu nền của nút */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+#edit {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #007bff; /* Màu nền của nút */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: none;
+}
+
+#create:hover,
+#edit:hover {
+    background-color: #0056b3; /* Màu nền khi hover */
+}
+
+.btn {
+    cursor: pointer;
+}
