@@ -3,14 +3,56 @@ import axios from "axios";
 import "./App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt, faPen } from "@fortawesome/free-solid-svg-icons";
+import { Button, Modal } from "antd";
 
 const App = () => {
-    const createBtn = document.querySelector("#create");
-    const saveBtn = document.querySelector("#edit");
     const [users, setUsers] = useState([]);
     const [notification, setNotification] = useState("");
     const [create, setCreate] = useState(false);
-    const [createDisabled, setCreateDisabled] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
+    const [modalText, setModalText] = useState("Content of the modal");
+    const [userIdToDelete, setUserIdToDelete] = useState(null);
+    const [title, setTitle] = useState("");
+    const [action, setAction] = useState("");
+    const [userIdToEdit, setUserIdToEdit] = useState("");
+    const showModal = (userId, action) => {
+        setUserIdToDelete(userId);
+        setUserIdToEdit(userId);
+        setOpen(true);
+        setAction(action);
+    };
+    const handleOk = () => {
+        setConfirmLoading(true);
+        if (action === "delete") {
+            deleteUser(userIdToDelete);
+        } else if (action === "save") {
+            editUser(userIdToEdit);
+        } else if (action === "create") {
+            handleCreate();
+        }
+        setTimeout(() => {
+            setOpen(false);
+            setConfirmLoading(false);
+        }, 2000);
+    };
+    const handleCancel = () => {
+        console.log("Clicked cancel button");
+        setOpen(false);
+    };
+
+    useEffect(() => {
+        if (action === "delete") {
+            setTitle("Xoa");
+            setModalText("Xoa nguoi dung nay ?");
+        } else if (action === "save") {
+            setTitle("Luu");
+            setModalText("Luu thay doi");
+        } else if (action === "create") {
+            setTitle("Tao");
+            setModalText("Xac nhan tao nguoi dung moi");
+        }
+    }, [action]);
     useEffect(() => {
         getUsers();
     }, []);
@@ -34,9 +76,6 @@ const App = () => {
     };
 
     const renderUsers = () => {
-        if (saveBtn) {
-            saveBtn.style.display = "none";
-        }
         return users.map((user) => (
             <tr key={user.id}>
                 <td>{user.id}</td>
@@ -49,16 +88,32 @@ const App = () => {
                 <td>
                     <button
                         className="edit-btn"
-                        onClick={() => editUser(user.id)}
+                        onClick={() => {
+                            setUserIdToEdit(user.id);
+                            getUserToEdit(user.id);
+                        }}
                     >
                         <FontAwesomeIcon icon={faPen} />
                     </button>
                     <button
+                        type="primary"
                         className="delete-btn"
-                        onClick={() => deleteUser(user.id)}
+                        onClick={() => {
+                            showModal(user.id, "delete");
+                        }}
                     >
                         <FontAwesomeIcon icon={faTrashAlt} />
                     </button>
+                    <Modal
+                        title={title}
+                        open={open}
+                        onOk={handleOk}
+                        confirmLoading={confirmLoading}
+                        onCancel={handleCancel}
+                        mask={false}
+                    >
+                        <p>{modalText}</p>
+                    </Modal>
                 </td>
             </tr>
         ));
@@ -107,58 +162,43 @@ const App = () => {
         document.querySelector('input[name="name"]').focus();
     };
 
-    const editUser = (id) => {
+    const getUserToEdit = (id) => {
         scrollToTop();
-        if (createBtn) {
-            createBtn.style.display = "none";
-            if (saveBtn) {
-                saveBtn.style.display = "block";
-            }
-        }
         axios
             .get(`https://60becf8e6035840017c17a48.mockapi.io/users/${id}`)
-            .then((response) => {
-                const user = response.data;
+            .then((res) => {
+                const user = res.data;
                 document.querySelector('input[name="name"]').value = user.name;
                 document.querySelector('input[name="ava"]').value = user.avatar;
                 document.querySelector('input[name="email"]').value =
                     user.email;
                 document.querySelector('input[name="city"]').value = user.city;
+            });
+    };
 
-                const saveBtn = document.querySelector("#edit");
-                saveBtn.onclick = () => {
-                    const updatedUser = {
-                        name: document.querySelector('input[name="name"]')
-                            .value,
-                        avatar: document.querySelector('input[name="ava"]')
-                            .value,
-                        email: document.querySelector('input[name="email"]')
-                            .value,
-                        city: document.querySelector('input[name="city"]')
-                            .value,
-                    };
+    const editUser = (id) => {
+        scrollToTop();
+        console.log("Ham edit user duoc goi");
+        const updatedUser = {
+            name: document.querySelector('input[name="name"]').value,
+            avatar: document.querySelector('input[name="ava"]').value,
+            email: document.querySelector('input[name="email"]').value,
+            city: document.querySelector('input[name="city"]').value,
+        };
 
-                    axios
-                        .put(
-                            `https://60becf8e6035840017c17a48.mockapi.io/users/${id}`,
-                            updatedUser
-                        )
-                        .then(() => {
-                            setNotification("User updated");
-                            noNotification();
-                            getUsers();
-                            clearInputFields();
-                        })
-                        .catch((error) => {
-                            console.error("Error updating user:", error);
-                        });
-                    saveBtn.style.display = "none";
-
-                    createBtn.style.display = "block";
-                };
+        axios
+            .put(
+                `https://60becf8e6035840017c17a48.mockapi.io/users/${id}`,
+                updatedUser
+            )
+            .then(() => {
+                setNotification("User updated");
+                noNotification();
+                getUsers();
+                clearInputFields();
             })
             .catch((error) => {
-                console.error("Error fetching user:", error);
+                console.error("Error updating user:", error);
             });
     };
 
@@ -232,13 +272,19 @@ const App = () => {
                             id="create"
                             className="btn"
                             onClick={() => {
-                                handleCreate();
-                                setCreate(!create);
+                                showModal(0, "create");
                             }}
                         >
                             Create
                         </button>
-                        <button id="edit" className="btn">
+                        <button
+                            id="edit"
+                            className="btn"
+                            onClick={() => {
+                                showModal(userIdToEdit, "save");
+                            }}
+                            style={{ display: "block" }}
+                        >
                             Save
                         </button>
                     </div>
